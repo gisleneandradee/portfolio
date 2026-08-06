@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia do Carrossel Swiper — Seção Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #17141f;
+    --bg-soft: #1e1a2b;
+    --surface: #262038;
+    --surface-2: #2e2745;
+    --line: #3a3155;
+    --violet: #8b6cf2;
+    --violet-soft: #a892f6;
+    --slate: #8c86ab;
+    --teal: #38d6c6;
+    --amber: #f2b661;
+    --rose: #f2769b;
+    --text: #ece9f7;
+    --text-dim: #a89fc7;
+    --code-tag: #a892f6;
+    --code-attr: #38d6c6;
+    --code-str: #f2b661;
+    --code-comment: #6e6690;
+    --radius: 14px;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1000px 600px at 85% -10%, rgba(139,108,242,.16), transparent 60%),
+      radial-gradient(800px 500px at -10% 30%, rgba(56,214,198,.08), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important; transition:none !important;}
+  }
+
+  h1,h2,h3{font-family:var(--display); margin:0; letter-spacing:-.01em;}
+  code, pre, .mono{font-family:var(--mono);}
+  a{color:inherit;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- TOPBAR ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(23,20,31,.85);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between; padding:14px 28px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:600; font-size:15px;}
+  .brand .dot{width:9px; height:9px; border-radius:50%; background:var(--violet); box-shadow:0 0 0 4px rgba(139,108,242,.18);}
+  .brand small{display:block; color:var(--text-dim); font-family:var(--mono); font-weight:400; font-size:11px; margin-top:2px;}
+  .path{font-family:var(--mono); font-size:12px; color:var(--text-dim); background:var(--surface); padding:6px 12px; border-radius:8px; border:1px solid var(--line);}
+  .path b{color:var(--violet-soft); font-weight:500;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:64px 0 40px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:12px; color:var(--teal);
+    background:rgba(56,214,198,.08); border:1px solid rgba(56,214,198,.25);
+    padding:6px 12px; border-radius:999px; margin-bottom:20px;
+  }
+  .hero h1{font-size:clamp(32px,4.4vw,52px); line-height:1.08; max-width:780px;}
+  .hero h1 span{color:var(--violet-soft);}
+  .hero p.lead{max-width:620px; color:var(--text-dim); font-size:17px; margin-top:18px;}
+
+  /* ---------- DIAGRAM (signature element) ---------- */
+  .diagram{
+    margin-top:44px; border:1px solid var(--line); border-radius:var(--radius);
+    background:linear-gradient(180deg, var(--bg-soft), var(--bg));
+    padding:28px; overflow-x:auto;
+  }
+  .diagram-label{font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:16px; text-transform:uppercase; letter-spacing:.08em;}
+  .stack{min-width:640px;}
+  .box{border-radius:12px; border:1.5px solid; padding:14px; position:relative; transition:transform .18s ease, box-shadow .18s ease;}
+  .box:hover{transform:translateY(-2px);}
+  .box .tag{
+    font-family:var(--mono); font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;
+    padding:3px 9px; border-radius:6px; margin-bottom:2px;
+  }
+  .box .desc{font-size:12.5px; color:var(--text-dim); margin-top:4px;}
+  .box.swiper{border-color:rgba(139,108,242,.5); background:rgba(139,108,242,.05);}
+  .box.swiper > .tag{background:rgba(139,108,242,.18); color:var(--violet-soft);}
+  .box.wrapper{border-color:rgba(56,214,198,.5); background:rgba(56,214,198,.05); margin-top:14px;}
+  .box.wrapper > .tag{background:rgba(56,214,198,.16); color:var(--teal);}
+  .slides-row{display:flex; gap:12px; margin-top:14px; overflow-x:auto; padding-bottom:4px;}
+  .box.slide{border-color:rgba(242,182,97,.5); background:rgba(242,182,97,.06); min-width:150px; flex:1;}
+  .box.slide > .tag{background:rgba(242,182,97,.18); color:var(--amber);}
+  .box.slide.active-repo{border-color:var(--amber); box-shadow:0 0 0 1px var(--amber) inset;}
+  .box.slide.ghost{opacity:.45; border-style:dashed;}
+  .siblings-row{display:flex; gap:12px; margin-top:14px;}
+  .box.nav{border-color:rgba(242,118,155,.5); background:rgba(242,118,155,.06); flex:1;}
+  .box.nav > .tag{background:rgba(242,118,155,.18); color:var(--rose);}
+  .box.pagination{border-color:rgba(242,118,155,.5); background:rgba(242,118,155,.06); flex:1;}
+  .box.pagination > .tag{background:rgba(242,118,155,.18); color:var(--rose);}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{padding:56px 0;}
+  .section-head{margin-bottom:28px; max-width:680px;}
+  .section-head .kicker{font-family:var(--mono); font-size:12px; color:var(--violet-soft); margin-bottom:8px;}
+  .section-head h2{font-size:clamp(24px,3vw,32px);}
+  .section-head p{color:var(--text-dim); margin-top:10px; font-size:15px;}
+
+  /* ---------- EXPLORER (interactive signature) ---------- */
+  .explorer{
+    display:grid; grid-template-columns:1fr 340px; gap:20px;
+    border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+    background:var(--bg-soft);
+  }
+  @media (max-width:880px){ .explorer{grid-template-columns:1fr;} }
+
+  .code-pane{padding:0; overflow:auto; max-height:640px;}
+  .code-pane .file-tab{
+    display:flex; align-items:center; gap:8px; padding:10px 18px; font-family:var(--mono); font-size:12px;
+    color:var(--text-dim); border-bottom:1px solid var(--line); background:var(--surface); position:sticky; top:0;
+  }
+  .file-tab .dots{display:flex; gap:5px;}
+  .file-tab .dots span{width:8px; height:8px; border-radius:50%; background:var(--line);}
+  pre.code{margin:0; padding:20px 0; font-size:12.6px; line-height:1.85;}
+  .line{display:flex; padding:0 18px; border-left:3px solid transparent; cursor:default; white-space:pre;}
+  .line .ln{width:28px; flex:none; color:#514a70; user-select:none; text-align:right; margin-right:16px;}
+  .line .code-text{white-space:pre-wrap; word-break:break-word;}
+  .line.hl{background:rgba(139,108,242,.1); border-left-color:var(--violet);}
+  .line.hl .ln{color:var(--violet-soft);}
+  .tk-tag{color:var(--code-tag);}
+  .tk-attr{color:var(--code-attr);}
+  .tk-str{color:var(--code-str);}
+  .tk-comment{color:var(--code-comment); font-style:italic;}
+  .tk-punc{color:#7a7396;}
+
+  .legend{border-left:1px solid var(--line); padding:18px; overflow:auto; max-height:640px;}
+  .legend-title{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); margin-bottom:12px;}
+  .chip{
+    display:block; width:100%; text-align:left; background:var(--surface); border:1px solid var(--line);
+    border-radius:10px; padding:11px 12px; margin-bottom:8px; cursor:pointer; color:var(--text);
+    font-family:var(--body); font-size:13px; transition:border-color .15s ease, background .15s ease;
+  }
+  .chip .chip-top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .chip .chip-name{font-family:var(--mono); font-size:12.5px; font-weight:600;}
+  .chip .chip-fn{display:block; margin-top:5px; color:var(--text-dim); font-size:12px; line-height:1.5;}
+  .chip.active{border-color:var(--violet); background:rgba(139,108,242,.1);}
+  .chip.active .chip-name{color:var(--violet-soft);}
+  .chip .swatch{width:8px; height:8px; border-radius:50%; flex:none;}
+
+  /* ---------- TABLE ---------- */
+  .table-card{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--bg-soft);}
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  thead th{
+    text-align:left; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--text-dim); background:var(--surface); padding:12px 16px; border-bottom:1px solid var(--line);
+  }
+  tbody td{padding:14px 16px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--text-dim);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody td.cls{font-family:var(--mono); color:var(--violet-soft); font-size:12.5px; white-space:nowrap;}
+  tbody td strong{color:var(--text); font-weight:500;}
+  .badge{display:inline-block; font-family:var(--mono); font-size:10.5px; padding:2px 7px; border-radius:5px; margin-left:6px;}
+  .badge.required{background:rgba(242,118,155,.15); color:var(--rose); border:1px solid rgba(242,118,155,.3);}
+  .badge.needs-js{background:rgba(242,182,97,.15); color:var(--amber); border:1px solid rgba(242,182,97,.3);}
+
+  /* ---------- CALLOUT ---------- */
+  .callout{
+    display:flex; gap:14px; border:1px solid rgba(242,182,97,.35); background:rgba(242,182,97,.06);
+    border-radius:var(--radius); padding:20px 22px; margin-top:20px;
+  }
+  .callout .icon{font-size:20px; flex:none; margin-top:2px;}
+  .callout h3{font-size:15px; margin-bottom:6px; color:var(--amber); font-family:var(--body); font-weight:600;}
+  .callout p{margin:0; color:var(--text-dim); font-size:13.5px;}
+  .callout code{background:var(--surface); padding:1px 6px; border-radius:4px; color:var(--code-str); font-size:12px;}
+
+  .callout.bug{border-color:rgba(139,108,242,.35); background:rgba(139,108,242,.06);}
+  .callout.bug h3{color:var(--violet-soft);}
+
+  /* ---------- ROADMAP ---------- */
+  .roadmap{display:flex; gap:0; margin-top:8px; overflow-x:auto;}
+  .stop{flex:1; min-width:150px; position:relative; padding:18px 16px 18px 0;}
+  .stop::before{content:""; position:absolute; top:26px; left:0; right:-0px; height:2px; background:var(--line);}
+  .stop:first-child::before{left:0;}
+  .stop .node{
+    width:14px; height:14px; border-radius:50%; background:var(--bg); border:2px solid var(--line);
+    position:relative; z-index:2; margin-bottom:14px;
+  }
+  .stop.current .node{border-color:var(--violet); background:var(--violet); box-shadow:0 0 0 5px rgba(139,108,242,.18);}
+  .stop .name{font-family:var(--mono); font-size:12.5px; color:var(--text-dim);}
+  .stop.current .name{color:var(--violet-soft); font-weight:600;}
+  .stop .tag2{display:block; font-size:11px; color:#5a5378; margin-top:3px;}
+
+  footer{border-top:1px solid var(--line); padding:34px 0 50px; margin-top:30px;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+  footer p{margin:0; color:#5a5378; font-size:12.5px; font-family:var(--mono);}
+
+  ::selection{background:rgba(139,108,242,.35);}
+  ::-webkit-scrollbar{height:8px; width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--line); border-radius:8px;}
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <span class="dot"></span>
+        <div>
+          Anatomia do Carrossel
+          <small>portfolio_tjs13 · rafaelq80</small>
+        </div>
+      </div>
+      <div class="path">branch <b>01_HTML</b> → <span id="pathFile">index.html</span></div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="eyebrow">● seção <code>#projects</code> · Swiper.js</span>
+      <h1>Como a seção <span>Projects</span> vira um carrossel</h1>
+      <p class="lead">Este guia disseca o HTML da seção de projetos do portfólio e explica, peça por peça, a estrutura que a biblioteca <strong>Swiper.js</strong> exige para transformar uma lista simples em um carrossel navegável — com setas, paginação e slides.</p>
+
+      <div class="diagram">
+        <div class="diagram-label">Hierarquia exigida pelo Swiper</div>
+        <div class="stack">
+          <div class="box swiper">
+            <span class="tag">.swiper</span>
+            <span class="desc">Contêiner raiz — delimita a "janela" visível do carrossel</span>
+
+            <div class="box wrapper">
+              <span class="tag">.swiper-wrapper</span>
+              <span class="desc">Trilho que desliza — agrupa e move todos os slides</span>
+
+              <div class="slides-row">
+                <div class="box slide active-repo">
+                  <span class="tag">.swiper-slide</span>
+                  <span class="desc">Projeto GitHub</span>
+                </div>
+                <div class="box slide ghost">
+                  <span class="tag">.swiper-slide</span>
+                  <span class="desc">próximo projeto…</span>
+                </div>
+                <div class="box slide ghost">
+                  <span class="tag">.swiper-slide</span>
+                  <span class="desc">próximo projeto…</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="siblings-row">
+              <div class="box nav">
+                <span class="tag">.swiper-button-prev / -next</span>
+                <span class="desc">Setas de navegação — irmãs do wrapper, não filhas</span>
+              </div>
+              <div class="box pagination">
+                <span class="tag">.swiper-pagination</span>
+                <span class="desc">Bolinhas indicadoras da posição atual</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">01 · explorador de código</div>
+        <h2>O HTML real da seção, anotado</h2>
+        <p>Clique em cada peça na lista à direita para destacar, no código abaixo, exatamente onde ela vive e qual função cumpre na engrenagem do carrossel.</p>
+      </div>
+
+      <div class="explorer">
+        <div class="code-pane">
+          <div class="file-tab">
+            <span class="dots"><span></span><span></span><span></span></span>
+            index.html — seção #projects
+          </div>
+          <pre class="code" id="codeBlock"></pre>
+        </div>
+        <div class="legend">
+          <div class="legend-title">Peças do carrossel</div>
+          <div id="chipList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">02 · referência rápida</div>
+        <h2>Função de cada classe Swiper</h2>
+        <p>Toda essa nomenclatura não é estética: são os <em>hooks</em> que o JavaScript do Swiper procura no DOM ao ser inicializado.</p>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr><th>Classe / elemento</th><th>Onde fica</th><th>O que faz</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cls">.swiper<span class="badge required">raiz</span></td>
+              <td>No projeto, a <code>&lt;div class="swiper projects-swiper"&gt;</code> que envolve tudo.</td>
+              <td><strong>Contêiner principal.</strong> É o elemento passado ao construtor <code>new Swiper()</code>. Define o recorte (overflow) por onde os slides aparecem.</td>
+            </tr>
+            <tr>
+              <td class="cls">.swiper-wrapper<span class="badge required">obrigatória</span></td>
+              <td><code>&lt;div class="swiper-wrapper"&gt;</code>, filha direta de <code>.swiper</code>.</td>
+              <td><strong>Trilho deslizante.</strong> O Swiper aplica <code>transform: translate3d()</code> nesse elemento para mover o conjunto de slides horizontalmente.</td>
+            </tr>
+            <tr>
+              <td class="cls">.swiper-slide<span class="badge required">obrigatória</span></td>
+              <td>Cada <code>&lt;div class="swiper-slide"&gt;</code>, filha direta de <code>.swiper-wrapper</code>.</td>
+              <td><strong>Um item do carrossel.</strong> No projeto, cada slide envolve um <code>.project-card</code> (ícone, título, tags e botões do projeto).</td>
+            </tr>
+            <tr>
+              <td class="cls">.swiper-button-next / -prev<span class="badge needs-js">precisa de JS</span></td>
+              <td><code>&lt;div class="swiper-button-next"&gt;</code> e <code>-prev</code>, irmãs de <code>.swiper-wrapper</code>.</td>
+              <td><strong>Setas de navegação.</strong> Só ficam clicáveis quando o módulo <code>Navigation</code> é habilitado na inicialização do JS.</td>
+            </tr>
+            <tr>
+              <td class="cls">.swiper-pagination<span class="badge needs-js">precisa de JS</span></td>
+              <td><code>&lt;div class="swiper-pagination"&gt;</code>, também irmã de <code>.swiper-wrapper</code>.</td>
+              <td><strong>Indicador de posição.</strong> O módulo <code>Pagination</code> injeta as bolinhas dinamicamente aqui em tempo de execução.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">03 · linha do tempo</div>
+        <h2>Onde a seção Projects está nessa jornada</h2>
+        <p>O repositório evolui em branches sucessivas — cada uma soma uma camada sobre a anterior.</p>
+      </div>
+      <div class="roadmap">
+        <div class="stop current"><div class="node"></div><span class="name">01_HTML</span><span class="tag2">esqueleto semântico ← você está aqui</span></div>
+        <div class="stop"><div class="node"></div><span class="name">02_CSS</span><span class="tag2">estilo visual do card e do trilho</span></div>
+        <div class="stop"><div class="node"></div><span class="name">03_responsividade</span><span class="tag2">breakpoints mobile/tablet</span></div>
+        <div class="stop"><div class="node"></div><span class="name">04_JS</span><span class="tag2">Swiper.js inicializado + API GitHub</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>gerado a partir de github.com/rafaelq80/portfolio_tjs13 · branch 01_HTML</p>
+      <p>swiper · swiper-wrapper · swiper-slide · swiper-button-next/prev · swiper-pagination</p>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  // Código real da seção #projects, tokenizado em spans para o painel de anotação.
+  // Cada linha carrega um data-part opcional que a liga a um chip da legenda.
+  const lines = [
+    {t:'&lt;section id="projects" class="section-container projects-container"&gt;', part:null},
+    {t:'', part:null},
+    {t:'  &lt;h2&gt;Meus Projetos&lt;/h2&gt;', part:null},
+    {t:'', part:null},
+    {t:'  &lt;!-- Swiper Container --&gt;', part:null, comment:true},
+    {t:'  &lt;div class="swiper projects-swiper"&gt;', part:'swiper'},
+    {t:'', part:'swiper'},
+    {t:'    &lt;div class="swiper-wrapper"&gt;', part:'wrapper'},
+    {t:'', part:'wrapper'},
+    {t:'      &lt;div class="swiper-slide"&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'        &lt;article class="project-card"&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'          &lt;!-- Ícone da Tecnologia padrão do projeto --&gt;', part:'slide', comment:true},
+    {t:'          &lt;figure class="project-image"&gt;', part:'slide'},
+    {t:'            &lt;img src="./assets/icons/languages/github.svg"', part:'slide'},
+    {t:'                alt="Ícone do GitHub"', part:'slide'},
+    {t:'                width="100px"', part:'slide'},
+    {t:'            &gt;', part:'slide'},
+    {t:'          &lt;/figure&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'          &lt;!-- Conteúdo do Projeto --&gt;', part:'slide', comment:true},
+    {t:'          &lt;div class="project-content"&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'            &lt;h3&gt;Projeto GitHub&lt;/h3&gt;', part:'slide'},
+    {t:'            &lt;p&gt;Projeto desenvolvido no GitHub&lt;/p&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'            &lt;!-- Tags do Projeto --&gt;', part:'slide', comment:true},
+    {t:'            &lt;div class="project-tags"&gt;', part:'slide'},
+    {t:'              &lt;span class="tag"&gt;GitHub&lt;/span&gt;', part:'slide'},
+    {t:'            &lt;/div&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'            &lt;!-- Links do Projeto --&gt;', part:'slide', comment:true},
+    {t:'            &lt;div class="project-buttons"&gt;', part:'slide'},
+    {t:'              &lt;a href="#" target="_blank" class="botao botao-sm"&gt;', part:'slide'},
+    {t:'                GitHub', part:'slide'},
+    {t:'              &lt;/a&gt;', part:'slide'},
+    {t:'              &lt;a href="#" target="_blank" class="botao-outline botao-sm"&gt;', part:'slide'},
+    {t:'                Deploy', part:'slide'},
+    {t:'              &lt;/a&gt;', part:'slide'},
+    {t:'            &lt;/div&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'          &lt;/div&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'        &lt;/article&gt;', part:'slide'},
+    {t:'', part:'slide'},
+    {t:'      &lt;/div&gt; &lt;!-- fecha o slide --&gt;', part:'slide'},
+    {t:'', part:'wrapper'},
+    {t:'    &lt;/div&gt;', part:'wrapper'},
+    {t:'', part:'swiper'},
+    {t:'    &lt;!-- Botões de Navegação --&gt;', part:'nav', comment:true},
+    {t:'    &lt;div class="swiper-button-next"&gt;&lt;/div&gt;', part:'nav'},
+    {t:'    &lt;div class="swiper-button-prev"&gt;&lt;/div&gt;', part:'nav'},
+    {t:'', part:'swiper'},
+    {t:'    &lt;!-- Paginação --&gt;', part:'pagination', comment:true},
+    {t:'    &lt;div class="swiper-pagination"&gt;&lt;/div&gt;', part:'pagination'},
+    {t:'', part:null},
+    {t:'  &lt;/div&gt;', part:'swiper'},
+    {t:'', part:null},
+    {t:'&lt;/section&gt;', part:null},
+  ];
+
+  const parts = {
+    swiper:     {name:'.swiper',                color:'#8b6cf2', fn:'Contêiner raiz do carrossel. É o seletor que o JavaScript usa em new Swiper(".projects-swiper", …) para "ligar" a biblioteca a este bloco de HTML.'},
+    wrapper:    {name:'.swiper-wrapper',         color:'#38d6c6', fn:'Trilho que recebe o deslocamento horizontal. Agrupa todos os .swiper-slide e é movido via transform quando o usuário navega.'},
+    slide:      {name:'.swiper-slide',           color:'#f2b661', fn:'Cada slide individual. Aqui, envolve um .project-card completo — ícone, título, tags e botões de um projeto do portfólio.'},
+    nav:        {name:'.swiper-button-next/prev',color:'#f2769b', fn:'Setas de avançar/voltar. Ficam fora do .swiper-wrapper (são irmãs dele) e só recebem comportamento de clique quando o módulo Navigation é ativado no JS.'},
+    pagination: {name:'.swiper-pagination',      color:'#f2769b', fn:'Espaço reservado para os indicadores (bolinhas). O módulo Pagination do Swiper preenche este <div> dinamicamente em tempo de execução.'}
+  };
+
+  const codeBlock = document.getElementById('codeBlock');
+  const chipList = document.getElementById('chipList');
+
+  function highlight(raw){
+    const M1 = '\u0001', M2 = '\u0002'; // marcadores temporários, fora do alfabeto do HTML
+    let out = raw.replace(/(&lt;\/?)([a-zA-Z0-9]+)/g, (m, p1, p2) => p1 + M1 + 'TAG' + M2 + p2 + M1 + M2);
+    out = out.replace(/([a-zA-Z-]+)(=)(&quot;|")([^"]*)(&quot;|")/g, (m, p1, p2, p3, p4, p5) =>
+      M1 + 'ATTR' + M2 + p1 + M1 + M2 + p2 + M1 + 'STR' + M2 + p3 + p4 + p5 + M1 + M2
+    );
+    out = out.replace(new RegExp(M1+'TAG'+M2+'(.*?)'+M1+M2, 'g'), '<span class="tk-tag">$1</span>');
+    out = out.replace(new RegExp(M1+'ATTR'+M2+'(.*?)'+M1+M2, 'g'), '<span class="tk-attr">$1</span>');
+    out = out.replace(new RegExp(M1+'STR'+M2+'(.*?)'+M1+M2, 'g'), '<span class="tk-str">$1</span>');
+    return out;
+  }
+
+  lines.forEach((line, i) => {
+    const row = document.createElement('div');
+    row.className = 'line' + (line.part ? ' part-'+line.part : '');
+    if(line.part) row.dataset.part = line.part;
+    const ln = document.createElement('span');
+    ln.className = 'ln';
+    ln.textContent = line.t ? (i+1) : '';
+    const codeText = document.createElement('span');
+    codeText.className = 'code-text' + (line.comment ? ' tk-comment' : '');
+    codeText.innerHTML = line.comment ? line.t : highlight(line.t);
+    row.appendChild(ln);
+    row.appendChild(codeText);
+    codeBlock.appendChild(row);
+  });
+
+  Object.keys(parts).forEach(key => {
+    const p = parts[key];
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.dataset.part = key;
+    chip.innerHTML =
+      '<span class="chip-top">' +
+        '<span class="chip-name" style="color:'+p.color+'">'+p.name+'</span>' +
+        '<span class="swatch" style="background:'+p.color+'"></span>' +
+      '</span>' +
+      '<span class="chip-fn">'+p.fn+'</span>';
+    chip.addEventListener('click', () => selectPart(key, chip));
+    chipList.appendChild(chip);
+  });
+
+  function selectPart(key, chipEl){
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.line').forEach(l => l.classList.remove('hl'));
+    chipEl.classList.add('active');
+    const target = document.querySelector('.line[data-part="'+key+'"]');
+    document.querySelectorAll('.line[data-part="'+key+'"]').forEach(l => l.classList.add('hl'));
+    if(target) target.scrollIntoView({block:'center', behavior:'smooth'});
+  }
+
+  // seleciona .swiper por padrão para orientar o primeiro olhar
+  const firstChip = chipList.querySelector('.chip');
+  if(firstChip) selectPart('swiper', firstChip);
+})();
+</script>
+</body>
+</html>
