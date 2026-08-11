@@ -80,13 +80,13 @@ Para executar o projeto em ambiente local, siga os passos abaixo.
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
+   git clone https://github.com/gisleneandradee/portfolio.git
    ```
 
 2. Acesse a pasta do projeto:
 
    ```bash
-   cd seu-repositorio
+   cd portfolio
    ```
 
 3. Abra o projeto no Visual Studio Code:
@@ -105,7 +105,7 @@ O site será aberto no navegador e todas as alterações poderão ser visualizad
 
 Este site está disponível publicamente através do **GitHub Pages**. Você pode acessar a versão online pelo link abaixo:
 
-🔗 https://seu-usuario.github.io/seu-repositorio
+🔗 https://gisleneandradee.github.io/portfolio
 
 ------
 
